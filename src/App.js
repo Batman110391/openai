@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+import { useReducer, useEffect, useState } from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import {
+  setDocuments,
+  setLastDateAcquisition,
+  setLoading,
+} from "./store/store.actions";
+import reducer from "./store/store.reducer";
+import ResponsiveDrawer from "./pages/ResponsiveDrawer";
+import ChatBot from "./pages/ChatBot";
 
-function App() {
+const initialState = {
+  documents: [],
+  sections: [],
+  currentFilter: "",
+  collection: [],
+  currentArticle: {},
+  orderBy: "descA",
+  loading: true,
+  checkNewDocuments: {
+    loading: false,
+  },
+  corruptedDocumentsIds: [],
+  lastDateAcquisition: false,
+};
+
+export default function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <CssBaseline />
+      <ResponsiveDrawer>
+        <Router>
+          <Switch>
+            <Route path="/" exact>
+              <ChatBot />
+            </Route>
+            <Route path="/test" exact>
+              <div>Hello</div>
+            </Route>
+          </Switch>
+        </Router>
+      </ResponsiveDrawer>
+    </>
   );
 }
-
-export default App;
