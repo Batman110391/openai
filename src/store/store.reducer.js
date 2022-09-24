@@ -1,4 +1,4 @@
-import {
+/* import {
   CHECK_NEW_DOCUMENTS,
   LAST_DATE_ACQUISITION,
   RESET_DOCUMENTS,
@@ -9,57 +9,11 @@ import {
   SET_DOCUMENTS,
   SET_LOADING,
   SET_ORDER_DOC,
-} from './store.actions';
+} from './store.actions'; */
 
 export default function reducer(state, action) {
   switch (action.type) {
-    case SET_DOCUMENTS:
-      const newJson = action.payload;
-
-      const newDocuments = [...state.documents, newJson?.documents]
-        .flat()
-        .sort((a, b) =>
-          a?.ingestDate && b?.ingestDate
-            ? new Date(b.ingestDate) - new Date(a.ingestDate)
-            : -1
-        );
-
-      const copySection = [...state.sections];
-
-      Object.entries(newJson?.sections).map(([key, count]) => {
-        copySection.push({ key: key, count: count });
-      });
-
-      const newSection = copySection
-        .reduce((acc, val) => {
-          const index = acc.findIndex((obj) => obj.key === val.key);
-          if (index !== -1) {
-            acc[index].count += val.count;
-          } else {
-            acc.push({
-              key: val.key,
-              count: val.count,
-            });
-          }
-          return acc;
-        }, [])
-        .sort((a, b) => b.count - a.count);
-
-      const corruptedDocumentsIds = [
-        ...new Set([
-          ...state.corruptedDocumentsIds,
-          ...(newJson.corruptedDocuments || []),
-        ]),
-      ];
-
-      return {
-        ...state,
-        documents: newDocuments || [...state.documents],
-        sections: newSection || [...state.sections],
-        corruptedDocumentsIds,
-      };
-
-    case SET_ORDER_DOC:
+    /*  case SET_ORDER_DOC:
       const order = action.payload;
 
       if (order === 'ascA') {
@@ -187,7 +141,7 @@ export default function reducer(state, action) {
         checkNewDocuments: { loading: false },
         corruptedDocumentsIds: [],
         lastDateAcquisition: false,
-      };
+      }; */
 
     default:
       return state;
