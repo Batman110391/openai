@@ -7,7 +7,7 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 import { Avatar, Typography } from "@mui/material";
-import { deepOrange, deepPurple, grey, lightBlue } from "@mui/material/colors";
+import { deepOrange, deepPurple, lightBlue } from "@mui/material/colors";
 import { marvChatBot } from "../api/suggestion";
 import Skeleton from "@mui/material/Skeleton";
 
