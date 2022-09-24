@@ -10,6 +10,7 @@ function BoxLayout({ children }) {
         flexGrow: 1,
         p: 3,
         width: { sm: `calc(100% - 240px)` },
+        height: `calc(100% - 50px)`,
       }}
     >
       <Toolbar />

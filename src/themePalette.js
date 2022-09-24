@@ -1,30 +1,34 @@
-import { createTheme } from "@mui/material/styles";
+import * as React from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-const themePalette = createTheme({
-  palette: {
-    primary: {
-      main: "#3F51B5",
-      dark: "#192882",
-    },
-    secondary: {
-      light: "#F5F5F5",
-      main: "#E0E0E0",
-      dark: "rgba(0, 0, 0, 0.54)",
-    },
-  },
-  /* components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          overflow: 'hidden',
-          height: '100%',
-        },
-        'html, body, #root': {
-          height: `-webkit-fill-available`,
-        },
-      },
-    },
-  }, */
+export const ColorModeContext = React.createContext({
+  toggleColorMode: () => {},
 });
 
-export default themePalette;
+export default function ThemePalette({ children }) {
+  const [mode, setMode] = React.useState("light");
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+      },
+    }),
+    []
+  );
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode]
+  );
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </ColorModeContext.Provider>
+  );
+}
