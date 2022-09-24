@@ -15,7 +15,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import ResponsiveDrawer from "./pages/ResponsiveDrawer";
 import ChatBot from "./pages/ChatBot";
 
-const initialState = {
+/* const initialState = {
   documents: [],
   sections: [],
   currentFilter: "",
@@ -28,7 +28,7 @@ const initialState = {
   },
   corruptedDocumentsIds: [],
   lastDateAcquisition: false,
-};
+}; */
 
 export default function App() {
   //const [state, dispatch] = useReducer(reducer, initialState);
