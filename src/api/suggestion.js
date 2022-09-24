@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: process.env.REACT_APP_OPENAI_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -34,10 +34,10 @@ export async function suggestionsGrammaticalText(inputSearch) {
   return response;
 }
 
-export async function marvChatBot(inputSearch) {
+export async function marvChatBot(message) {
   const completion = await openai.createCompletion({
     model: "text-davinci-002",
-    prompt: `Marv is a chatbot that reluctantly answers questions with sarcastic responses in italian language:\n\nYou: ${inputSearch}\nMarv:`,
+    prompt: `Marv is a chatbot that reluctantly answers questions with sarcastic responses in italian language:\n\n${message}\nMarv:`,
     temperature: 0.5,
     max_tokens: 60,
     top_p: 0.3,

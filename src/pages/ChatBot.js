@@ -6,9 +6,48 @@ import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
+import { Avatar, Typography } from "@mui/material";
+import { deepOrange, deepPurple, grey, lightBlue } from "@mui/material/colors";
+import { marvChatBot } from "../api/suggestion";
+import Skeleton from "@mui/material/Skeleton";
 
 function ChatBot() {
   const [message, setMessage] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const getResponseMarvChat = async (message) => {
+    if (Boolean(message.length)) {
+      setLoading(true);
+      const messageInput = getMessage(message);
+
+      if (Boolean(messageInput)) {
+        const response = await marvChatBot(messageInput);
+
+        if (Boolean(response)) {
+          setMessage([
+            ...message,
+            { date: new Date(), message: response, author: "Marv" },
+          ]);
+        }
+
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    }
+  };
+
+  const getMessage = (message) => {
+    const initialValue = "";
+    const inputText = message
+      ?.sort((a, b) => a.date - b.date)
+      .reduce(
+        (prev, curr) => prev + "\n" + curr.author + ":" + curr.message,
+        initialValue
+      );
+
+    return inputText;
+  };
 
   return (
     <BoxLayout>
@@ -24,6 +63,7 @@ function ChatBot() {
         <Paper
           sx={{
             width: "100%",
+            height: "100%",
             display: "flex",
             flexDirection: "column-reverse",
             overflow: "auto",
@@ -32,18 +72,21 @@ function ChatBot() {
           variant="outlined"
           square
         >
+          {loading && <SkeletonLoadingChat />}
           {message.length > 0 &&
             message
               .sort((a, b) => b.date - a.date)
-              .map((mess) => {
+              .map((mess, i) => {
                 return (
-                  <div>
-                    {mess.author} : {mess.message}
-                  </div>
+                  <Message key={i} author={mess.author} text={mess.message} />
                 );
               })}
         </Paper>
-        <InputChatBox message={message} setMessage={setMessage} />
+        <InputChatBox
+          message={message}
+          setMessage={setMessage}
+          getResponseMarvChat={getResponseMarvChat}
+        />
       </Box>
     </BoxLayout>
   );
@@ -51,21 +94,28 @@ function ChatBot() {
 
 export default ChatBot;
 
-function InputChatBox({ message, setMessage }) {
-  const [currMessage, setCurrMessage] = React.useState({});
+function InputChatBox({ message, setMessage, getResponseMarvChat }) {
+  const [currMessage, setCurrMessage] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setMessage([...message, currMessage]);
-    setCurrMessage({});
+
+    if (Boolean(currMessage)) {
+      const newMessageObj = {
+        date: new Date(),
+        message: currMessage,
+        author: "You",
+      };
+
+      setMessage([...message, newMessageObj]);
+      setCurrMessage("");
+
+      getResponseMarvChat([...message, newMessageObj]);
+    }
   };
 
   const handleChange = (e) => {
-    setCurrMessage({
-      date: new Date(),
-      message: e.target.value,
-      author: "You",
-    });
+    setCurrMessage(e.target.value);
   };
 
   return (
@@ -86,7 +136,7 @@ function InputChatBox({ message, setMessage }) {
         sx={{ ml: 1, flex: 1 }}
         placeholder="Scrivi a Marv..."
         onChange={handleChange}
-        value={currMessage?.message || ""}
+        value={currMessage}
       />
       <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
       <IconButton
@@ -98,5 +148,82 @@ function InputChatBox({ message, setMessage }) {
         <SendIcon color="action" />
       </IconButton>
     </Paper>
+  );
+}
+
+function Message({ author, text }) {
+  const bgcolorAvatar = author === "You" ? deepOrange[500] : deepPurple[500];
+
+  return (
+    <Box
+      component="div"
+      sx={{
+        position: "relative",
+        width: "auto",
+        display: "flex",
+        alignItems: "center",
+        gap: "15px",
+        willChange: "contents",
+        marginBottom: "15px",
+      }}
+    >
+      <Avatar sx={{ width: 40, height: 40, bgcolor: bgcolorAvatar }}>
+        <Typography color="white" variant="caption">
+          {author.toUpperCase()}
+        </Typography>
+      </Avatar>
+      <Paper
+        elevatrion={1}
+        component="div"
+        sx={{
+          paddingInline: "16px",
+          paddingBlock: "8px",
+          borderRadius: "50px 50px 50px 8px",
+          bgcolor: lightBlue[300],
+          minWidth: "150px",
+        }}
+      >
+        <Typography variant="subtitle1" component="p">
+          {text}
+        </Typography>
+      </Paper>
+    </Box>
+  );
+}
+
+function SkeletonLoadingChat() {
+  return (
+    <Box
+      component="div"
+      sx={{
+        position: "relative",
+        width: "auto",
+        display: "flex",
+        alignItems: "center",
+        gap: "15px",
+        willChange: "contents",
+        marginBottom: "15px",
+      }}
+    >
+      <Avatar sx={{ width: 40, height: 40 }}>
+        <Skeleton animation="wave" variant="circular" width={40} height={40} />
+      </Avatar>
+      <Paper
+        elevatrion={1}
+        component="div"
+        sx={{
+          paddingInline: "16px",
+          paddingBlock: "8px",
+          borderRadius: "50px 50px 50px 8px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Skeleton animation="wave" variant="circular" width={10} height={10} />
+        <Skeleton animation="wave" variant="circular" width={10} height={10} />
+        <Skeleton animation="wave" variant="circular" width={10} height={10} />
+      </Paper>
+    </Box>
   );
 }
