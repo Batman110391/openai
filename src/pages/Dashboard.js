@@ -20,8 +20,8 @@ function Dashboard() {
   return (
     <BoxLayout>
       <Box sx={{ display: "flex", gap: "15px", alignItems: "center" }}>
-        {applications.map((app) => (
-          <CardApp title={app.name} path={app.path} image={app.image} />
+        {applications.map((app, i) => (
+          <CardApp key={i} title={app.name} path={app.path} image={app.image} />
         ))}
       </Box>
     </BoxLayout>

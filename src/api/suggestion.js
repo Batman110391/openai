@@ -53,7 +53,7 @@ export async function marvChatBot(message) {
 export async function movieReview(notes) {
   const completion = await openai.createCompletion({
     model: "text-davinci-002",
-    prompt: `Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri basata su questo Film:\n${notes}\nRecensione:`,
+    prompt: `Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri basata su questo Film:\nFilm: ${notes}\nRecensione:`,
     temperature: 0.5,
     max_tokens: 1725,
     top_p: 1,
