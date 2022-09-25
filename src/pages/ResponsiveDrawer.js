@@ -20,6 +20,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../ThemePalette";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -42,7 +43,7 @@ function ResponsiveDrawer(props) {
       <List>
         {[{ name: "Dashboard", icon: <DashboardIcon /> }].map((text, index) => (
           <ListItem key={text.name} disablePadding>
-            <ListItemButton>
+            <ListItemButton component={Link} to={"/"}>
               <ListItemIcon>{text.icon}</ListItemIcon>
               <ListItemText primary={text.name} />
             </ListItemButton>

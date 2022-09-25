@@ -49,3 +49,19 @@ export async function marvChatBot(message) {
 
   return response;
 }
+
+export async function movieReview(notes) {
+  const completion = await openai.createCompletion({
+    model: "text-davinci-002",
+    prompt: `Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri basata su questo Film:\n${notes}\nRecensione:`,
+    temperature: 0.5,
+    max_tokens: 1725,
+    top_p: 1,
+    frequency_penalty: 0.5,
+    presence_penalty: 1.3,
+  });
+
+  const response = completion.data.choices[0].text;
+
+  return response;
+}

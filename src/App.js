@@ -1,53 +1,37 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  //useNavigate,
-} from "react-router-dom";
-//import { useReducer, useEffect, useState } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { useReducer } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-/* import {
-  setDocuments,
-  setLastDateAcquisition,
-  setLoading,
-} from "./store/store.actions"; */
-//import reducer from "./store/store.reducer";
+import reducer from "./store/store.reducer";
 import ResponsiveDrawer from "./pages/ResponsiveDrawer";
-import ChatBot from "./pages/ChatBot";
+import Dashboard from "./pages/Dashboard";
+import ChatBot from "./applications/ChatBot";
+import Review from "./applications/Review";
 
-/* const initialState = {
-  documents: [],
-  sections: [],
-  currentFilter: "",
-  collection: [],
-  currentArticle: {},
-  orderBy: "descA",
-  loading: true,
-  checkNewDocuments: {
-    loading: false,
-  },
-  corruptedDocumentsIds: [],
-  lastDateAcquisition: false,
-}; */
+const initialState = {
+  message: [],
+};
 
 export default function App() {
-  //const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <>
       <CssBaseline />
-      <ResponsiveDrawer>
-        <Router>
+      <Router>
+        <ResponsiveDrawer>
           <Switch>
             <Route path="/" exact>
-              <ChatBot />
+              <Dashboard />
             </Route>
-            <Route path="/test" exact>
-              <div>Hello</div>
+            <Route path="/chatbot" exact>
+              <ChatBot message={state.message} dispatch={dispatch} />
+            </Route>
+            <Route path="/review" exact>
+              <Review />
             </Route>
           </Switch>
-        </Router>
-      </ResponsiveDrawer>
+        </ResponsiveDrawer>
+      </Router>
     </>
   );
 }

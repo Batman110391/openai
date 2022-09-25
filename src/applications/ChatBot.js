@@ -10,9 +10,9 @@ import { Avatar, Typography } from "@mui/material";
 import { deepOrange, deepPurple, lightBlue } from "@mui/material/colors";
 import { marvChatBot } from "../api/suggestion";
 import Skeleton from "@mui/material/Skeleton";
+import { setMessage } from "../store/store.actions";
 
-function ChatBot() {
-  const [message, setMessage] = React.useState([]);
+export default function ChatBot({ message, dispatch }) {
   const [loading, setLoading] = React.useState(false);
 
   const getResponseMarvChat = async (message) => {
@@ -24,10 +24,12 @@ function ChatBot() {
         const response = await marvChatBot(messageInput);
 
         if (Boolean(response)) {
-          setMessage([
-            ...message,
-            { date: new Date(), message: response, author: "Marv" },
-          ]);
+          dispatch(
+            setMessage([
+              ...message,
+              { date: new Date(), message: response, author: "Marv" },
+            ])
+          );
         }
 
         setLoading(false);
@@ -84,7 +86,7 @@ function ChatBot() {
         </Paper>
         <InputChatBox
           message={message}
-          setMessage={setMessage}
+          dispatch={dispatch}
           getResponseMarvChat={getResponseMarvChat}
         />
       </Box>
@@ -92,9 +94,7 @@ function ChatBot() {
   );
 }
 
-export default ChatBot;
-
-function InputChatBox({ message, setMessage, getResponseMarvChat }) {
+function InputChatBox({ message, dispatch, getResponseMarvChat }) {
   const [currMessage, setCurrMessage] = React.useState("");
 
   const handleSubmit = (e) => {
@@ -107,7 +107,7 @@ function InputChatBox({ message, setMessage, getResponseMarvChat }) {
         author: "You",
       };
 
-      setMessage([...message, newMessageObj]);
+      dispatch(setMessage([...message, newMessageObj]));
       setCurrMessage("");
 
       getResponseMarvChat([...message, newMessageObj]);
@@ -179,11 +179,11 @@ function Message({ author, text }) {
           paddingInline: "16px",
           paddingBlock: "8px",
           borderRadius: "50px 50px 50px 8px",
-          bgcolor: lightBlue[300],
+          bgcolor: lightBlue[600],
           minWidth: "150px",
         }}
       >
-        <Typography variant="subtitle1" component="p">
+        <Typography color="white" variant="subtitle1" component="p">
           {text}
         </Typography>
       </Paper>
