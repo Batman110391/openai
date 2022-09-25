@@ -106,6 +106,8 @@ export default function Review() {
       .map((attr) => {
         if (attr.check) {
           return attr.label + " " + labels[movieValueRating[attr.type]];
+        } else {
+          return null;
         }
       })
       .filter((attr) => Boolean(attr));
