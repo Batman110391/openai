@@ -12,7 +12,6 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import ContentCopyIcon from "@mui/icons-material/ContentCopyTwoTone";
 import ContentCopyTwoToneIcon from "@mui/icons-material/ContentCopyTwoTone";
 import DisabledByDefaultTwoToneIcon from "@mui/icons-material/DisabledByDefaultTwoTone";
 import Tooltip from "@mui/material/Tooltip";
@@ -21,6 +20,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { styled } from "@mui/material/styles";
 import { getMovieSearch } from "../api/searchMovie";
 import { movieReview } from "../api/suggestion";
+import { useSnackbar } from "notistack";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -46,6 +46,8 @@ export default function Review() {
   const [note, setNote] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const [movieValueRating, setMovieValueRating] = React.useState({
     photograph: 2,
     actors: 2,
@@ -63,6 +65,11 @@ export default function Review() {
   React.useEffect(() => {
     getMovies();
   }, []);
+
+  const createError = (text, variant) => {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(text, { variant });
+  };
 
   const getMovies = async (value) => {
     const keyword = value || "a";
@@ -103,22 +110,26 @@ export default function Review() {
   const generateReview = async () => {
     setLoading(true);
 
-    const ratings = movieAttributes
-      .map((attr) => {
-        if (attr.check) {
-          return attr.label + " " + labels[movieValueRating[attr.type]];
-        } else {
-          return null;
-        }
-      })
-      .filter((attr) => Boolean(attr));
+    if (Boolean(currentMovie)) {
+      const ratings = movieAttributes
+        .map((attr) => {
+          if (attr.check) {
+            return attr.label + " " + labels[movieValueRating[attr.type]];
+          } else {
+            return null;
+          }
+        })
+        .filter((attr) => Boolean(attr));
 
-    const notes = [currentMovie, ...ratings, note].join(",");
+      const notes = [currentMovie, ...ratings, note].join(",");
 
-    const reviewResp = await movieReview(notes);
+      const reviewResp = await movieReview(notes);
 
-    if (Boolean(reviewResp)) {
-      setReview([...review, reviewResp]);
+      if (Boolean(reviewResp)) {
+        setReview([...review, reviewResp]);
+      }
+    } else {
+      createError("Inserire almeno un film", "error");
     }
 
     setLoading(false);
@@ -151,8 +162,31 @@ export default function Review() {
                     setCurrentMovie(newValue);
                   }}
                   freeSolo
-                  options={movies.map(
-                    (option) => option.title + " del " + option.release_date
+                  options={movies}
+                  autoHighlight
+                  getOptionLabel={(option) =>
+                    option?.title
+                      ? option?.title + " del " + option.release_date
+                      : ""
+                  }
+                  renderOption={(props, option) => (
+                    <Box
+                      component="li"
+                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                    >
+                      {Boolean(option?.backdrop_path) && (
+                        <img
+                          loading="lazy"
+                          width="30"
+                          src={`http://image.tmdb.org/t/p/w500${option?.backdrop_path}`}
+                          srcSet={`http://image.tmdb.org/t/p/w500${option?.backdrop_path} 2x`}
+                          alt={option.title}
+                        />
+                      )}
+
+                      {option.title + " del " + option.release_date}
+                    </Box>
                   )}
                   renderInput={(params) => (
                     <TextField
@@ -217,57 +251,59 @@ export default function Review() {
               </Box>
             )}
             {Boolean(review.length) ? (
-              review.map((rew, i) => (
-                <TextField
-                  key={i + "rew"}
-                  sx={{ my: "15px" }}
-                  fullWidth
-                  label="Recensione"
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment
-                        position="start"
-                        sx={{
-                          position: "absolute",
-                          top: "10px",
-                          right: "10px",
-                          display: "flex",
-                          gap: "15px",
-                        }}
-                      >
-                        <Tooltip title="Copia">
-                          <IconButton
-                            edge="end"
-                            onClick={() => {
-                              navigator.clipboard.writeText(rew);
-                            }}
-                          >
-                            <ContentCopyTwoToneIcon
-                              fontSize="small"
-                              color="inherit"
-                            />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Rimuovi">
-                          <IconButton
-                            edge="end"
-                            onClick={() => handleRemove(i)}
-                          >
-                            <DisabledByDefaultTwoToneIcon
-                              fontSize="small"
-                              color="inherit"
-                            />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                  multiline
-                  variant="filled"
-                  value={rew || "..."}
-                />
-              ))
+              <Box sx={{ display: "flex", flexDirection: "column-reverse" }}>
+                {review.map((rew, i) => (
+                  <TextField
+                    key={i + "rew"}
+                    sx={{ my: "15px" }}
+                    fullWidth
+                    label="Recensione"
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment
+                          position="start"
+                          sx={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            display: "flex",
+                            gap: "15px",
+                          }}
+                        >
+                          <Tooltip title="Copia">
+                            <IconButton
+                              edge="end"
+                              onClick={() => {
+                                navigator.clipboard.writeText(rew);
+                              }}
+                            >
+                              <ContentCopyTwoToneIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Rimuovi">
+                            <IconButton
+                              edge="end"
+                              onClick={() => handleRemove(i)}
+                            >
+                              <DisabledByDefaultTwoToneIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }}
+                    multiline
+                    variant="filled"
+                    value={rew || "..."}
+                  />
+                ))}
+              </Box>
             ) : (
               <Box
                 sx={{
@@ -280,14 +316,14 @@ export default function Review() {
               >
                 <Typography
                   variant="h5"
-                  gutterBotto
+                  gutterBottom
                   sx={{ textAlign: "center" }}
                 >
                   Nessuna recensione generata
                 </Typography>
                 <Typography
                   variant="caption"
-                  gutterBotto
+                  gutterBottom
                   sx={{ textAlign: "center" }}
                 >
                   Cerca un film e imposta i parametri per generare delle
