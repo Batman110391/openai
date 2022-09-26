@@ -11,9 +11,16 @@ import { deepOrange, deepPurple, lightBlue } from "@mui/material/colors";
 import { marvChatBot } from "../api/suggestion";
 import Skeleton from "@mui/material/Skeleton";
 import { setMessage } from "../store/store.actions";
+import { useRef } from "react";
 
 export default function ChatBot({ message, dispatch }) {
   const [loading, setLoading] = React.useState(false);
+
+  const messagesEnd = useRef(null);
+
+  React.useEffect(() => {
+    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+  }, [message]);
 
   const getResponseMarvChat = async (message) => {
     if (Boolean(message.length)) {
@@ -74,6 +81,7 @@ export default function ChatBot({ message, dispatch }) {
           variant="outlined"
           square
         >
+          <div ref={messagesEnd} />
           {loading && <SkeletonLoadingChat />}
           {message.length > 0 &&
             message

@@ -43,7 +43,11 @@ function ResponsiveDrawer(props) {
       <List>
         {[{ name: "Dashboard", icon: <DashboardIcon /> }].map((text, index) => (
           <ListItem key={text.name} disablePadding>
-            <ListItemButton component={Link} to={"/"}>
+            <ListItemButton
+              component={Link}
+              to={"/"}
+              onClick={handleDrawerToggle}
+            >
               <ListItemIcon>{text.icon}</ListItemIcon>
               <ListItemText primary={text.name} />
             </ListItemButton>

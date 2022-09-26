@@ -121,7 +121,11 @@ export default function Review() {
         })
         .filter((attr) => Boolean(attr));
 
-      const notes = [currentMovie, ...ratings, note].join(",");
+      const titleMovie = currentMovie?.title
+        ? currentMovie?.title + " del " + currentMovie?.release_date
+        : "";
+
+      const notes = [titleMovie, ...ratings, note].join(",");
 
       const reviewResp = await movieReview(notes);
 
@@ -141,7 +145,7 @@ export default function Review() {
         container
         spacing={2}
         sx={{ height: "100%" }}
-        columns={{ xs: 4, sm: 6, md: 12 }}
+        columns={{ xs: 6, sm: 6, md: 12 }}
       >
         <Grid item xs={6}>
           <Item>
@@ -166,7 +170,7 @@ export default function Review() {
                   autoHighlight
                   getOptionLabel={(option) =>
                     option?.title
-                      ? option?.title + " del " + option.release_date
+                      ? option?.title + " del " + option?.release_date
                       : ""
                   }
                   renderOption={(props, option) => (
