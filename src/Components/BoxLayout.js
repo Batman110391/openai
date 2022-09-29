@@ -9,7 +9,11 @@ function BoxLayout({ children }) {
       sx={{
         flexGrow: 1,
         p: 3,
-        width: { sm: `calc(100% - 240px)` },
+        width: {
+          xs: "100%",
+          sm: `calc(100% - 240px)`,
+          md: "100%",
+        },
         height: `calc(100% - 50px)`,
       }}
     >

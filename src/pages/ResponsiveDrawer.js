@@ -72,7 +72,13 @@ function ResponsiveDrawer(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <CssBaseline />
       <AppBar
         color="default"
