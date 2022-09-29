@@ -19,7 +19,14 @@ function Dashboard() {
 
   return (
     <BoxLayout>
-      <Box sx={{ display: "flex", gap: "15px", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "15px",
+          alignItems: "center",
+          justifyContent: { xs: "center" },
+        }}
+      >
         {applications.map((app, i) => (
           <CardApp key={i} title={app.name} path={app.path} image={app.image} />
         ))}

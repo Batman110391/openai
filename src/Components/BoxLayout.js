@@ -8,11 +8,13 @@ function BoxLayout({ children }) {
       component="main"
       sx={{
         flexGrow: 1,
-        p: 3,
+        p: {
+          xs: "24px 8px 8px 8px",
+          sm: 3,
+        },
         width: {
           xs: "100%",
           sm: `calc(100% - 240px)`,
-          md: "100%",
         },
         height: `calc(100% - 50px)`,
       }}
