@@ -50,7 +50,7 @@ export async function marvChatBot(message) {
   return response;
 }
 
-export async function movieReview(notes, type) {
+export async function reviewIA(notes, type) {
   const prompt = getPrompt(type);
 
   const completion = await openai.createCompletion({
@@ -73,7 +73,7 @@ function getPrompt(type) {
     case "movie":
       return "Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri, menzionando il regista e la sceneggiatura";
     case "restaurant":
-      return "";
+      return "Scrivi una recensione di un ristorante in italiano lunga almeno 400 caratteri, prendendo in cosiderazione le seguenti note";
     default:
       return null;
   }

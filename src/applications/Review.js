@@ -17,11 +17,16 @@ import DisabledByDefaultTwoToneIcon from "@mui/icons-material/DisabledByDefaultT
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import MovieCreationTwoToneIcon from "@mui/icons-material/MovieCreationTwoTone";
+import RamenDiningTwoToneIcon from "@mui/icons-material/RamenDiningTwoTone";
 import { styled } from "@mui/material/styles";
 import { getMovieSearch } from "../api/searchMovie";
-import { movieReview } from "../api/suggestion";
+import { reviewIA } from "../api/suggestion";
 import { useSnackbar } from "notistack";
 import { useRef } from "react";
+import { setReview } from "../store/store.actions";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -40,12 +45,13 @@ const labels = {
   5: "Eccellente",
 };
 
-export default function Review() {
-  const [review, setReview] = React.useState([]);
-  const [currentMovie, setCurrentMovie] = React.useState("");
+export default function Review({ review, dispatch }) {
+  const [currentMovie, setCurrentMovie] = React.useState(null);
+  const [currentRestaurant, setCurrentRestaurant] = React.useState("");
   const [movies, setMovies] = React.useState([]);
   const [note, setNote] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [viewMode, setViewMode] = React.useState("movie");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -56,6 +62,13 @@ export default function Review() {
     directors: 2,
   });
 
+  const [restaurantValueRating, setRestaurantValueRating] = React.useState({
+    service: 2,
+    quality: 2,
+    location: 2,
+    prices: 2,
+  });
+
   const [movieAttributes, setMovieAttributes] = React.useState([
     { type: "photograph", label: "Fotografia", check: false },
     { type: "actors", label: "Attori", check: false },
@@ -63,11 +76,24 @@ export default function Review() {
     { type: "directors", label: "Regia", check: false },
   ]);
 
+  const [restaurantAttributes, setRestaurantAttributes] = React.useState([
+    { type: "service", label: "Servizio", check: false },
+    { type: "quality", label: "Qualità", check: false },
+    { type: "location", label: "Ambiente", check: false },
+    { type: "prices", label: "Prezzi", check: false },
+  ]);
+
   const reviewStart = useRef(null);
 
   React.useEffect(() => {
     getMovies();
   }, []);
+
+  const actualAttribute =
+    viewMode === "movie" ? movieAttributes : restaurantAttributes;
+
+  const actualValueRating =
+    viewMode === "movie" ? movieValueRating : restaurantValueRating;
 
   const createSnackbar = (text, variant) => {
     // variant could be success, error, warning, info, or default
@@ -84,20 +110,33 @@ export default function Review() {
     }
   };
 
+  const handleChangeViewMode = (event, nextView) => {
+    if (nextView !== null) {
+      setViewMode(nextView);
+    }
+  };
+
   const handleChangeAttCheck = (value, type) => {
-    const newAttr = movieAttributes.map((attr) => {
+    const newAttr = actualAttribute.map((attr) => {
       if (type === attr.type) {
         return { ...attr, check: !value };
       } else {
         return attr;
       }
     });
-
-    setMovieAttributes(newAttr);
+    if (viewMode === "movie") {
+      setMovieAttributes(newAttr);
+    } else {
+      setRestaurantAttributes(newAttr);
+    }
   };
 
   const handleChangeRating = (value, type) => {
-    setMovieValueRating({ ...movieValueRating, [type]: value });
+    if (viewMode === "movie") {
+      setMovieValueRating({ ...movieValueRating, [type]: value });
+    } else {
+      setRestaurantValueRating({ ...actualValueRating, [type]: value });
+    }
   };
 
   const handleChangeAutocomplete = (e) => {
@@ -107,7 +146,7 @@ export default function Review() {
   const handleRemove = (index) => {
     const newReviews = review.filter((rew, i) => i !== index);
 
-    setReview(newReviews);
+    dispatch(setReview(newReviews));
   };
 
   const generateReview = async () => {
@@ -115,11 +154,14 @@ export default function Review() {
 
     reviewStart?.current?.scrollIntoView({ behavior: "smooth" });
 
-    if (Boolean(currentMovie)) {
-      const ratings = movieAttributes
+    if (
+      (Boolean(currentMovie) && viewMode === "movie") ||
+      (Boolean(currentRestaurant) && viewMode === "restaurant")
+    ) {
+      const ratings = actualAttribute
         .map((attr) => {
           if (attr.check) {
-            return attr.label + " " + labels[movieValueRating[attr.type]];
+            return attr.label + " " + labels[actualValueRating[attr.type]];
           } else {
             return null;
           }
@@ -130,15 +172,24 @@ export default function Review() {
         ? currentMovie?.title + " del " + currentMovie?.release_date
         : "";
 
-      const notes = [titleMovie, ...ratings, note].join(",");
+      const firstParam =
+        viewMode === "movie"
+          ? titleMovie
+          : "Il nome del ristorante è " + currentRestaurant;
 
-      const reviewResp = await movieReview(notes, "movie");
+      const notes = [firstParam, ...ratings, note].join(",");
+
+      const reviewResp = await reviewIA(notes, viewMode);
 
       if (Boolean(reviewResp)) {
-        setReview([...review, reviewResp]);
+        dispatch(setReview([...review, reviewResp]));
       }
     } else {
-      createSnackbar("Inserire almeno un film", "error");
+      if (viewMode === "movie") {
+        createSnackbar("Inserire almeno un film", "error");
+      } else {
+        createSnackbar("Inserire almeno un ristorante", "error");
+      }
     }
 
     setLoading(false);
@@ -162,53 +213,80 @@ export default function Review() {
                 alignItems: "center",
               }}
             >
+              <ToggleButtonGroup
+                sx={{ marginBottom: 1 }}
+                orientation="horizontal"
+                value={viewMode}
+                exclusive
+                onChange={handleChangeViewMode}
+              >
+                <ToggleButton value="movie" aria-label="movie">
+                  <Tooltip title="Film">
+                    <MovieCreationTwoToneIcon />
+                  </Tooltip>
+                </ToggleButton>
+                <ToggleButton value="restaurant" aria-label="restaurant">
+                  <Tooltip title="Ristoranti">
+                    <RamenDiningTwoToneIcon />
+                  </Tooltip>
+                </ToggleButton>
+              </ToggleButtonGroup>
               <Box
                 component="div"
                 sx={{ width: "280px", marginBottom: "25px" }}
               >
-                <Autocomplete
-                  value={currentMovie}
-                  onChange={(event, newValue) => {
-                    setCurrentMovie(newValue);
-                  }}
-                  options={movies}
-                  autoHighlight
-                  getOptionLabel={(option) =>
-                    option?.title
-                      ? option?.title + " del " + option?.release_date
-                      : ""
-                  }
-                  renderOption={(props, option) => (
-                    <Box
-                      component="li"
-                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                      {...props}
-                    >
-                      {Boolean(option?.backdrop_path) && (
-                        <img
-                          loading="lazy"
-                          width="30"
-                          src={`http://image.tmdb.org/t/p/w500${option?.backdrop_path}`}
-                          srcSet={`http://image.tmdb.org/t/p/w500${option?.backdrop_path} 2x`}
-                          alt={option.title}
-                        />
-                      )}
+                {viewMode === "movie" ? (
+                  <Autocomplete
+                    value={currentMovie}
+                    onChange={(event, newValue) => {
+                      setCurrentMovie(newValue);
+                    }}
+                    options={movies}
+                    autoHighlight
+                    getOptionLabel={(option) =>
+                      option?.title
+                        ? option?.title + " del " + option?.release_date
+                        : ""
+                    }
+                    renderOption={(props, option) => (
+                      <Box
+                        component="li"
+                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                        {...props}
+                      >
+                        {Boolean(option?.backdrop_path) && (
+                          <img
+                            loading="lazy"
+                            width="30"
+                            src={`http://image.tmdb.org/t/p/w500${option?.backdrop_path}`}
+                            srcSet={`http://image.tmdb.org/t/p/w500${option?.backdrop_path} 2x`}
+                            alt={option.title}
+                          />
+                        )}
 
-                      {option.title + " del " + option.release_date}
-                    </Box>
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      onChange={handleChangeAutocomplete}
-                      {...params}
-                      label="Film"
-                    />
-                  )}
-                />
+                        {option.title + " del " + option.release_date}
+                      </Box>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        onChange={handleChangeAutocomplete}
+                        {...params}
+                        label="Film"
+                      />
+                    )}
+                  />
+                ) : (
+                  <TextField
+                    fullWidth
+                    label="Ristorante"
+                    variant="outlined"
+                    onChange={(e) => setCurrentRestaurant(e.target.value)}
+                  />
+                )}
               </Box>
 
               <Box component="div" sx={{ width: "280px" }}>
-                {movieAttributes.map((attr, i) => {
+                {actualAttribute.map((attr, i) => {
                   return (
                     <React.Fragment key={attr.type}>
                       <FormControlLabel
@@ -224,7 +302,7 @@ export default function Review() {
                       />
                       <RatingReview
                         disabled={!attr.check}
-                        value={movieValueRating[attr.type]}
+                        value={actualValueRating[attr.type]}
                         onChange={handleChangeRating}
                         type={attr.type}
                       />
@@ -252,7 +330,7 @@ export default function Review() {
             </FormGroup>
           </Item>
         </Grid>
-        <Grid item xs={6} sx={{ height: "100%", paddingBottom: "8px" }}>
+        <Grid item xs={6} sx={{ height: "100%", xs: { paddingBottom: "8px" } }}>
           <Item>
             {loading && (
               <Box sx={{ width: "100%" }}>

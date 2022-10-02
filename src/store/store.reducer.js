@@ -1,4 +1,4 @@
-import { SET_MESSAGE } from "./store.actions";
+import { SET_MESSAGE, SET_REVIEW } from "./store.actions";
 
 export default function reducer(state, action) {
   switch (action.type) {
@@ -9,7 +9,13 @@ export default function reducer(state, action) {
         ...state,
         message: message,
       };
+    case SET_REVIEW:
+      const review = action.payload;
 
+      return {
+        ...state,
+        review: review,
+      };
     default:
       return state;
   }

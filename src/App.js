@@ -9,6 +9,7 @@ import Review from "./applications/Review";
 
 const initialState = {
   message: [],
+  review: [],
 };
 
 export default function App() {
@@ -27,7 +28,7 @@ export default function App() {
               <ChatBot message={state.message} dispatch={dispatch} />
             </Route>
             <Route path="/review" exact>
-              <Review />
+              <Review review={state.review} dispatch={dispatch} />
             </Route>
           </Switch>
         </ResponsiveDrawer>

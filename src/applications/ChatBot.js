@@ -83,7 +83,7 @@ export default function ChatBot({ message, dispatch }) {
         >
           <div ref={messagesEnd} />
           {loading && <SkeletonLoadingChat />}
-          {message.length > 0 &&
+          {message?.length > 0 &&
             message
               .sort((a, b) => b.date - a.date)
               .map((mess, i) => {
