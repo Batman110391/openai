@@ -24,7 +24,7 @@ function Dashboard() {
           display: "flex",
           gap: "15px",
           alignItems: "center",
-          justifyContent: { xs: "center" },
+          justifyContent: { xs: "center", sm: "inherit" },
         }}
       >
         {applications.map((app, i) => (

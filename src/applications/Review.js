@@ -21,6 +21,7 @@ import { styled } from "@mui/material/styles";
 import { getMovieSearch } from "../api/searchMovie";
 import { movieReview } from "../api/suggestion";
 import { useSnackbar } from "notistack";
+import { useRef } from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -62,11 +63,13 @@ export default function Review() {
     { type: "directors", label: "Regia", check: false },
   ]);
 
+  const reviewStart = useRef(null);
+
   React.useEffect(() => {
     getMovies();
   }, []);
 
-  const createError = (text, variant) => {
+  const createSnackbar = (text, variant) => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(text, { variant });
   };
@@ -93,7 +96,7 @@ export default function Review() {
     setMovieAttributes(newAttr);
   };
 
-  const handleChange = (value, type) => {
+  const handleChangeRating = (value, type) => {
     setMovieValueRating({ ...movieValueRating, [type]: value });
   };
 
@@ -109,6 +112,8 @@ export default function Review() {
 
   const generateReview = async () => {
     setLoading(true);
+
+    reviewStart?.current?.scrollIntoView({ behavior: "smooth" });
 
     if (Boolean(currentMovie)) {
       const ratings = movieAttributes
@@ -127,13 +132,13 @@ export default function Review() {
 
       const notes = [titleMovie, ...ratings, note].join(",");
 
-      const reviewResp = await movieReview(notes);
+      const reviewResp = await movieReview(notes, "movie");
 
       if (Boolean(reviewResp)) {
         setReview([...review, reviewResp]);
       }
     } else {
-      createError("Inserire almeno un film", "error");
+      createSnackbar("Inserire almeno un film", "error");
     }
 
     setLoading(false);
@@ -154,6 +159,7 @@ export default function Review() {
                 width: "100%",
                 height: "100%",
                 p: "16px 0px",
+                alignItems: "center",
               }}
             >
               <Box
@@ -165,7 +171,6 @@ export default function Review() {
                   onChange={(event, newValue) => {
                     setCurrentMovie(newValue);
                   }}
-                  freeSolo
                   options={movies}
                   autoHighlight
                   getOptionLabel={(option) =>
@@ -202,7 +207,7 @@ export default function Review() {
                 />
               </Box>
 
-              <Box component="div" sx={{ width: "100%" }}>
+              <Box component="div" sx={{ width: "280px" }}>
                 {movieAttributes.map((attr, i) => {
                   return (
                     <React.Fragment key={attr.type}>
@@ -220,7 +225,7 @@ export default function Review() {
                       <RatingReview
                         disabled={!attr.check}
                         value={movieValueRating[attr.type]}
-                        onChange={handleChange}
+                        onChange={handleChangeRating}
                         type={attr.type}
                       />
                     </React.Fragment>
@@ -247,13 +252,14 @@ export default function Review() {
             </FormGroup>
           </Item>
         </Grid>
-        <Grid item xs={6} sx={{ height: "100%" }}>
+        <Grid item xs={6} sx={{ height: "100%", paddingBottom: "8px" }}>
           <Item>
             {loading && (
               <Box sx={{ width: "100%" }}>
                 <LinearProgress />
               </Box>
             )}
+            <div ref={reviewStart} />
             {Boolean(review.length) ? (
               <Box sx={{ display: "flex", flexDirection: "column-reverse" }}>
                 {review.map((rew, i) => (
@@ -279,6 +285,7 @@ export default function Review() {
                             <IconButton
                               edge="end"
                               onClick={() => {
+                                createSnackbar("Testo copiato", "info");
                                 navigator.clipboard.writeText(rew);
                               }}
                             >

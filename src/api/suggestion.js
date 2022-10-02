@@ -37,12 +37,12 @@ export async function suggestionsGrammaticalText(inputSearch) {
 export async function marvChatBot(message) {
   const completion = await openai.createCompletion({
     model: "text-davinci-002",
-    prompt: `Marv is a chatbot that reluctantly answers questions with sarcastic responses in italian language:\n\n${message}\nMarv:`,
-    temperature: 0.5,
-    max_tokens: 60,
-    top_p: 0.3,
+    prompt: `Marv è un chatbot molto disponibile, divertente e amichevole, che intrattiene e risponde alla domande in lingua italiana :\n\n${message}\nMarv:`,
+    temperature: 0,
+    max_tokens: 700,
+    top_p: 1,
     frequency_penalty: 0.5,
-    presence_penalty: 0.0,
+    presence_penalty: 0.5,
   });
 
   const response = completion.data.choices[0].text;
@@ -50,10 +50,12 @@ export async function marvChatBot(message) {
   return response;
 }
 
-export async function movieReview(notes) {
+export async function movieReview(notes, type) {
+  const prompt = getPrompt(type);
+
   const completion = await openai.createCompletion({
     model: "text-davinci-002",
-    prompt: `Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri, menzionando il regista, basata su queste Note:\nNote: ${notes}\nRecensione:`,
+    prompt: `${prompt}, basata su queste Note:\nNote: ${notes}\nRecensione:`,
     temperature: 0.5,
     max_tokens: 1725,
     top_p: 1,
@@ -64,4 +66,15 @@ export async function movieReview(notes) {
   const response = completion.data.choices[0].text;
 
   return response;
+}
+
+function getPrompt(type) {
+  switch (type) {
+    case "movie":
+      return "Scrivi una recensione cinematografica in italiano lunga almeno 400 caratteri, menzionando il regista e la sceneggiatura";
+    case "restaurant":
+      return "";
+    default:
+      return null;
+  }
 }
