@@ -1,4 +1,4 @@
-import { SET_MESSAGE, SET_REVIEW } from "./store.actions";
+import { SET_DIFF_TEXT, SET_MESSAGE, SET_REVIEW } from "./store.actions";
 
 export default function reducer(state, action) {
   switch (action.type) {
@@ -15,6 +15,12 @@ export default function reducer(state, action) {
       return {
         ...state,
         review: review,
+      };
+    case SET_DIFF_TEXT:
+      const diffText = action.payload;
+      return {
+        ...state,
+        differenceText: diffText,
       };
     default:
       return state;

@@ -15,6 +15,11 @@ function Dashboard() {
       path: "/review",
       image: "image/review.png",
     },
+    {
+      name: "Differenze nel testo",
+      path: "/difference",
+      image: "image/difference.jpg",
+    },
   ];
 
   return (

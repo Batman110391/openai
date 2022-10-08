@@ -6,10 +6,12 @@ import ResponsiveDrawer from "./pages/ResponsiveDrawer";
 import Dashboard from "./pages/Dashboard";
 import ChatBot from "./applications/ChatBot";
 import Review from "./applications/Review";
+import DiffText from "./applications/DiffText";
 
 const initialState = {
   message: [],
   review: [],
+  differenceText: { originalText: "", analyzedText: "", before: "", after: "" },
 };
 
 export default function App() {
@@ -29,6 +31,9 @@ export default function App() {
             </Route>
             <Route path="/review" exact>
               <Review review={state.review} dispatch={dispatch} />
+            </Route>
+            <Route path="/difference" exact>
+              <DiffText difftext={state.differenceText} dispatch={dispatch} />
             </Route>
           </Switch>
         </ResponsiveDrawer>

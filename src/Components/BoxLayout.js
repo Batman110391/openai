@@ -2,7 +2,7 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 
-function BoxLayout({ children }) {
+function BoxLayout({ children, style }) {
   return (
     <Box
       component="main"
@@ -16,7 +16,8 @@ function BoxLayout({ children }) {
           xs: "100%",
           sm: `calc(100% - 240px)`,
         },
-        height: `calc(100% - 50px)`,
+        height: style?.height || `calc(100% - 50px)`,
+        ...style,
       }}
     >
       <Toolbar />
