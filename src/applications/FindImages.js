@@ -22,6 +22,7 @@ import { setFindImages } from "../store/store.actions";
 import ImageSearchTwoToneIcon from "@mui/icons-material/ImageSearchTwoTone";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ProgressiveImage from "react-progressive-graceful-image";
+import ImageListItemBar from "@mui/material/ImageListItemBar";
 import { areEqual } from "../utils/util";
 
 /*  q: "",
@@ -333,11 +334,7 @@ function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
       hasMore={hasMore}
       loader={<Typography variant="caption">{"Loading..."}</Typography>}
     >
-      <ImageList variant="masonry" cols={3} gap={8}>
-        {itemData.hits.map((item, i) => (
-          <ItemRow key={i} image={item} indexCurr={i} />
-        ))}
-      </ImageList>
+      <ItemRow itemData={itemData} />
     </InfiniteScroll>
   ) : (
     <div>
@@ -354,34 +351,52 @@ function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
 
 const ItemRow = React.memo(LoadingImage, areEqual);
 
-function LoadingImage({ image, indexCurr }) {
+function LoadingImage({ itemData }) {
   const styleLoading = {
     loading: {
       width: "100%",
       filter: "blur(10px)",
       clipPath: "inset(0)",
+      cursor: "progress",
     },
     loaded: {
       width: "100%",
       filter: "blur(0px)",
       transition: "filter 0.3s linear",
+      cursor: "zoom-in",
     },
   };
 
   return (
-    <ImageListItem key={image.tags + indexCurr}>
-      <ProgressiveImage src={image?.webformatURL || ""} placeholder={""}>
-        {(src, loading) => (
-          <img
-            style={loading ? styleLoading.loading : styleLoading.loaded}
-            src={src}
-            srcSet={`${src}? 2x`}
-            alt={image?.tags || ""}
-            loading="lazy"
+    <ImageList variant="masonry" cols={3} gap={8}>
+      {itemData.hits.map((item, i) => (
+        <ImageListItem key={item.tags + i}>
+          <ProgressiveImage
+            src={item?.webformatURL || ""}
+            placeholder={item?.webformatURL || ""}
+          >
+            {(src, loading) => (
+              <img
+                style={loading ? styleLoading.loading : styleLoading.loaded}
+                src={src}
+                srcSet={`${src}? 2x`}
+                alt={item?.tags || ""}
+                loading="lazy"
+              />
+            )}
+          </ProgressiveImage>
+          <ImageListItemBar
+            sx={{
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+            }}
+            title={item?.tags}
+            position="top"
           />
-        )}
-      </ProgressiveImage>
-    </ImageListItem>
+        </ImageListItem>
+      ))}
+    </ImageList>
   );
 }
 
