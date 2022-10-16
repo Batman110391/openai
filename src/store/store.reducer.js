@@ -1,4 +1,9 @@
-import { SET_DIFF_TEXT, SET_MESSAGE, SET_REVIEW } from "./store.actions";
+import {
+  SET_DIFF_TEXT,
+  SET_FIND_IMAGES,
+  SET_MESSAGE,
+  SET_REVIEW,
+} from "./store.actions";
 
 export default function reducer(state, action) {
   switch (action.type) {
@@ -21,6 +26,12 @@ export default function reducer(state, action) {
       return {
         ...state,
         differenceText: diffText,
+      };
+    case SET_FIND_IMAGES:
+      const query = action.payload;
+      return {
+        ...state,
+        queryFindImage: query,
       };
     default:
       return state;

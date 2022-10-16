@@ -7,11 +7,22 @@ import Dashboard from "./pages/Dashboard";
 import ChatBot from "./applications/ChatBot";
 import Review from "./applications/Review";
 import DiffText from "./applications/DiffText";
+import FindImages from "./applications/FindImages";
 
 const initialState = {
   message: [],
   review: [],
   differenceText: { originalText: "", analyzedText: "", before: "", after: "" },
+  queryFindImage: {
+    q: "",
+    image_type: "all",
+    orientation: "all",
+    category: "",
+    colors: "",
+    order: "popular",
+    page: 1,
+    images: [],
+  },
 };
 
 export default function App() {
@@ -34,6 +45,12 @@ export default function App() {
             </Route>
             <Route path="/difference" exact>
               <DiffText difftext={state.differenceText} dispatch={dispatch} />
+            </Route>
+            <Route path="/findimages" exact>
+              <FindImages
+                queryFindImage={state.queryFindImage}
+                dispatch={dispatch}
+              />
             </Route>
           </Switch>
         </ResponsiveDrawer>

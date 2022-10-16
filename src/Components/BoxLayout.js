@@ -2,10 +2,12 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 
-function BoxLayout({ children, style }) {
+function BoxLayout({ children, style, refElem }) {
   return (
     <Box
+      id="boxLayout"
       component="main"
+      ref={refElem || null}
       sx={{
         flexGrow: 1,
         p: {

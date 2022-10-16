@@ -20,6 +20,11 @@ function Dashboard() {
       path: "/difference",
       image: "image/difference.jpg",
     },
+    {
+      name: "Trova immagini gratuite",
+      path: "/findimages",
+      image: "image/findimage.jpg",
+    },
   ];
 
   return (
