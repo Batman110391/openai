@@ -78,6 +78,10 @@ export default function FindImages({ queryFindImage, dispatch }) {
   const [loading, setLoading] = React.useState(true);
   const [hasMore, setHashMore] = React.useState(true);
 
+  const actualImages = React.useMemo(() => {
+    return queryFindImage.images;
+  }, [queryFindImage.images]);
+
   const handleChange = (e, type) => {
     dispatch(setFindImages({ ...queryFindImage, [type]: e.target.value }));
   };
@@ -259,7 +263,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
 
       {queryFindImage?.images?.hits && (
         <MasonryVirtualizationImageList
-          itemData={queryFindImage.images}
+          itemData={actualImages}
           hasMore={hasMore}
           fetchMoreData={fetchMoreData}
         />
@@ -373,15 +377,13 @@ function LoadingImage({ itemData }) {
         <ImageListItem key={item.tags + i}>
           <ProgressiveImage
             src={item?.webformatURL || ""}
-            placeholder={item?.webformatURL || ""}
+            placeholder={`image/blur.jpg?h=${item?.webformatHeight}`}
           >
             {(src, loading) => (
               <img
                 style={loading ? styleLoading.loading : styleLoading.loaded}
                 src={src}
-                srcSet={`${src}? 2x`}
                 alt={item?.tags || ""}
-                loading="lazy"
               />
             )}
           </ProgressiveImage>
