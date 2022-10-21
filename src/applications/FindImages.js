@@ -129,15 +129,17 @@ export default function FindImages({ queryFindImage, dispatch }) {
 
     const response = await getImages(newQueryFindImages, true);
 
-    dispatch(
-      setFindImages({
-        ...newQueryFindImages,
-        images: {
-          ...newQueryFindImages.images,
-          hits: [...newQueryFindImages.images.hits.concat(response.hits)],
-        },
-      })
-    );
+    setTimeout(() => {
+      dispatch(
+        setFindImages({
+          ...newQueryFindImages,
+          images: {
+            ...newQueryFindImages.images,
+            hits: [...newQueryFindImages.images.hits.concat(response.hits)],
+          },
+        })
+      );
+    }, 200);
   };
 
   console.log(queryFindImage);
@@ -360,13 +362,12 @@ function LoadingImage({ itemData }) {
     loading: {
       width: "100%",
       filter: "blur(10px)",
-      clipPath: "inset(0)",
       cursor: "progress",
     },
     loaded: {
       width: "100%",
       filter: "blur(0px)",
-      transition: "filter 0.3s linear",
+      transition: "filter 0.2s linear",
       cursor: "zoom-in",
     },
   };
@@ -374,18 +375,33 @@ function LoadingImage({ itemData }) {
   return (
     <ImageList variant="masonry" cols={3} gap={8}>
       {itemData.hits.map((item, i) => (
-        <ImageListItem key={item.tags + i}>
+        <ImageListItem key={item.id}>
           <ProgressiveImage
             src={item?.webformatURL || ""}
             placeholder={`image/blur.jpg?h=${item?.webformatHeight}`}
           >
-            {(src, loading) => (
-              <img
-                style={loading ? styleLoading.loading : styleLoading.loaded}
-                src={src}
-                alt={item?.tags || ""}
-              />
-            )}
+            {(src, loading) => {
+              console.log(i);
+              return (
+                <img
+                  style={
+                    loading
+                      ? {
+                          ...styleLoading.loading,
+                          height: `${item?.webformatHeight}px`,
+                        }
+                      : {
+                          ...styleLoading.loaded,
+                          height: `${item?.webformatHeight}px`,
+                        }
+                  }
+                  src={
+                    loading ? `image/blur.jpg?h=${item?.webformatHeight}` : src
+                  }
+                  alt={item?.tags || ""}
+                />
+              );
+            }}
           </ProgressiveImage>
           <ImageListItemBar
             sx={{
