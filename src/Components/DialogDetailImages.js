@@ -11,9 +11,9 @@ import Typography from "@mui/material/Typography";
 import DownloadForOfflineTwoToneIcon from "@mui/icons-material/DownloadForOfflineTwoTone";
 import { searchFreeImages } from "../api/searchImages";
 import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
+import { saveAs } from "file-saver";
 import { ImageLoading } from "../applications/FindImages";
-import { areEqual } from "../utils/util";
+import { areEqual, useBreakpointWidht } from "../utils/util";
 
 const query = {
   orientation: "all",
@@ -36,6 +36,9 @@ export default function DialogDetailImages({
   const [loading, setLoading] = React.useState(false);
 
   const imageStart = React.useRef(null);
+
+  const colsSM = useBreakpointWidht("sm");
+  const colsMD = useBreakpointWidht("md");
 
   const handleClose = () => {
     closeDialog();
@@ -84,13 +87,15 @@ export default function DialogDetailImages({
     setLoading(false);
   };
 
+  const downloadImage = () => {
+    saveAs(image?.largeImageURL, "image.jpg");
+  };
+
   const styleImage = {
     maxHeight: zoomIn ? "unset" : '"500px"',
     cursor: zoomIn ? "zoom-out" : "zoom-in",
     width: zoomIn ? "100%" : "unset",
   };
-
-  console.log("ITEM -> ", relatedImages);
 
   return (
     <Dialog
@@ -120,25 +125,27 @@ export default function DialogDetailImages({
           <Typography variant="caption" fontWeight="bold">
             Immagini correlate
           </Typography>
-          <ImageList variant="masonry" cols={3} gap={8}>
-            {!loading &&
-              relatedImages
-                .filter((item, i) => item.id !== image.id && i <= 10)
-                .map((item) => (
-                  <ImageListItem key={item.id}>
-                    <img
-                      onClick={() => {
-                        imageStart?.current?.scrollIntoView({
-                          behavior: "smooth",
-                        });
-                        handleOpenDialogImages(item);
-                      }}
-                      src={item?.webformatURL}
-                      alt={item?.tags || ""}
-                      style={{ objectFit: "cover", cursor: "pointer" }}
-                    />
-                  </ImageListItem>
-                ))}
+          <ImageList
+            variant="masonry"
+            cols={colsMD ? 3 : colsSM ? 2 : 1}
+            gap={8}
+          >
+            {relatedImages
+              .filter((item, i) => item.id !== image.id && i <= 10)
+              .map((item) => (
+                <ImageRow
+                  key={item.id}
+                  item={item}
+                  otherAction={() => {
+                    imageStart?.current?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                    handleOpenDialogImages(item);
+                  }}
+                  otherStyle={{ cursor: "pointer" }}
+                  headetTitle={false}
+                />
+              ))}
           </ImageList>
         </Box>
       </DialogContent>
@@ -147,6 +154,7 @@ export default function DialogDetailImages({
           size="small"
           variant="contained"
           endIcon={<DownloadForOfflineTwoToneIcon />}
+          onClick={downloadImage}
         >
           Scarica immagine
         </Button>

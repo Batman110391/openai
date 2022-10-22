@@ -419,7 +419,9 @@ export function ImageLoading({
   item,
   handleOpenDialogImages,
   headetTitle = true,
-  anotherStyle,
+  otherStyle,
+  otherAction,
+  ...rest
 }) {
   const styleLoading = {
     loading: {
@@ -434,7 +436,7 @@ export function ImageLoading({
       transition: "filter 0.2s linear",
       cursor: "zoom-in",
       objectFit: "cover",
-      ...anotherStyle,
+      ...otherStyle,
     },
   };
 
@@ -446,7 +448,9 @@ export function ImageLoading({
       >
         {(src, loading) => (
           <img
-            onClick={() => handleOpenDialogImages(item)}
+            onClick={
+              otherAction ? otherAction : () => handleOpenDialogImages(item)
+            }
             style={
               loading
                 ? {
@@ -460,6 +464,7 @@ export function ImageLoading({
             }
             src={loading ? `image/blur.jpg?h=${item?.webformatHeight}` : src}
             alt={item?.tags || ""}
+            {...rest}
           />
         )}
       </ProgressiveImage>
