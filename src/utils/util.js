@@ -1,3 +1,6 @@
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+
 function shallowDiffers(prev, next) {
   for (let attribute in prev) {
     if (!(attribute in next)) {
@@ -29,4 +32,10 @@ export function areEqual(prevProps, nextProps) {
     !shallowDiffers(prevRest, nextRest) &&
     (nextIsScrolling === prevIsScrolling || nextIsScrolling)
   );
+}
+
+export function useBreakpointWidht(breakpoint) {
+  const theme = useTheme();
+  let matches = useMediaQuery(theme.breakpoints.up(breakpoint));
+  return matches;
 }

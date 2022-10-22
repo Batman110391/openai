@@ -23,7 +23,8 @@ import ImageSearchTwoToneIcon from "@mui/icons-material/ImageSearchTwoTone";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ProgressiveImage from "react-progressive-graceful-image";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
-import { areEqual } from "../utils/util";
+import { areEqual, useBreakpointWidht } from "../utils/util";
+import "./cubeLoading.css";
 
 /*  q: "",
     image_type: "all",
@@ -139,7 +140,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
           },
         })
       );
-    }, 200);
+    }, 100);
   };
 
   console.log(queryFindImage);
@@ -338,7 +339,15 @@ function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
       dataLength={itemData?.hits?.length || 0}
       next={() => fetchMoreData(itemData?.hits, itemData?.totalHits || 0)}
       hasMore={hasMore}
-      loader={<Typography variant="caption">{"Loading..."}</Typography>}
+      pullDownToRefresh={false}
+      loader={
+        <div className="sk-folding-cube">
+          <div className="sk-cube1 sk-cube" />
+          <div className="sk-cube2 sk-cube" />
+          <div className="sk-cube4 sk-cube" />
+          <div className="sk-cube3 sk-cube" />
+        </div>
+      }
     >
       <ItemRow itemData={itemData} />
     </InfiniteScroll>
@@ -355,66 +364,74 @@ function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
   );
 }
 
-const ItemRow = React.memo(LoadingImage, areEqual);
+const ItemRow = React.memo(RenderRow, areEqual);
 
-function LoadingImage({ itemData }) {
+const ImageRow = React.memo(ImageLoading, areEqual);
+
+function RenderRow({ itemData }) {
+  const colsSM = useBreakpointWidht("sm");
+  const colsMD = useBreakpointWidht("md");
+
+  return (
+    <ImageList variant="masonry" cols={colsMD || colsSM ? 2 : 1} gap={8}>
+      {itemData.hits.map((item) => (
+        <ImageRow item={item} />
+      ))}
+    </ImageList>
+  );
+}
+
+function ImageLoading({ item }) {
   const styleLoading = {
     loading: {
       width: "100%",
-      filter: "blur(10px)",
+      filter: "blur(7px)",
       cursor: "progress",
+      objectFit: "cover",
     },
     loaded: {
       width: "100%",
       filter: "blur(0px)",
       transition: "filter 0.2s linear",
       cursor: "zoom-in",
+      objectFit: "cover",
     },
   };
 
   return (
-    <ImageList variant="masonry" cols={3} gap={8}>
-      {itemData.hits.map((item, i) => (
-        <ImageListItem key={item.id}>
-          <ProgressiveImage
-            src={item?.webformatURL || ""}
-            placeholder={`image/blur.jpg?h=${item?.webformatHeight}`}
-          >
-            {(src, loading) => {
-              console.log(i);
-              return (
-                <img
-                  style={
-                    loading
-                      ? {
-                          ...styleLoading.loading,
-                          height: `${item?.webformatHeight}px`,
-                        }
-                      : {
-                          ...styleLoading.loaded,
-                          height: `${item?.webformatHeight}px`,
-                        }
+    <ImageListItem key={item.id}>
+      <ProgressiveImage
+        src={item?.webformatURL || ""}
+        placeholder={`image/blur.jpg?h=${item?.webformatHeight}`}
+      >
+        {(src, loading) => (
+          <img
+            style={
+              loading
+                ? {
+                    ...styleLoading.loading,
+                    height: `${item?.webformatHeight}px`,
                   }
-                  src={
-                    loading ? `image/blur.jpg?h=${item?.webformatHeight}` : src
+                : {
+                    ...styleLoading.loaded,
+                    height: `${item?.webformatHeight}px`,
                   }
-                  alt={item?.tags || ""}
-                />
-              );
-            }}
-          </ProgressiveImage>
-          <ImageListItemBar
-            sx={{
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
-            }}
-            title={item?.tags}
-            position="top"
+            }
+            src={loading ? `image/blur.jpg?h=${item?.webformatHeight}` : src}
+            alt={item?.tags || ""}
           />
-        </ImageListItem>
-      ))}
-    </ImageList>
+        )}
+      </ProgressiveImage>
+      <ImageListItemBar
+        sx={{
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+            "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+        }}
+        title={item?.tags}
+        position="top"
+      />
+    </ImageListItem>
   );
 }
 
