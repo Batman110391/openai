@@ -25,6 +25,7 @@ import ProgressiveImage from "react-progressive-graceful-image";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 import { areEqual, useBreakpointWidht } from "../utils/util";
 import "./cubeLoading.css";
+import DialogDetailImages from "../Components/DialogDetailImages";
 
 /*  q: "",
     image_type: "all",
@@ -78,6 +79,8 @@ const colors = [
 export default function FindImages({ queryFindImage, dispatch }) {
   const [loading, setLoading] = React.useState(true);
   const [hasMore, setHashMore] = React.useState(true);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [currentImage, setCurrentImage] = React.useState({});
 
   const actualImages = React.useMemo(() => {
     return queryFindImage.images;
@@ -85,6 +88,15 @@ export default function FindImages({ queryFindImage, dispatch }) {
 
   const handleChange = (e, type) => {
     dispatch(setFindImages({ ...queryFindImage, [type]: e.target.value }));
+  };
+
+  const handleOpenDialogImages = (item) => {
+    setCurrentImage(item);
+    setOpenDialog(true);
+  };
+
+  const closeDialog = () => {
+    setOpenDialog(false);
   };
 
   const getImages = async (query, onlyImages) => {
@@ -269,8 +281,15 @@ export default function FindImages({ queryFindImage, dispatch }) {
           itemData={actualImages}
           hasMore={hasMore}
           fetchMoreData={fetchMoreData}
+          handleOpenDialogImages={handleOpenDialogImages}
         />
       )}
+      <DialogDetailImages
+        open={openDialog}
+        closeDialog={closeDialog}
+        image={currentImage}
+        handleOpenDialogImages={handleOpenDialogImages}
+      />
     </BoxLayout>
   );
 }
@@ -333,7 +352,12 @@ function InputFindImages({
   );
 }
 
-function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
+function MasonryVirtualizationImageList({
+  itemData,
+  hasMore,
+  fetchMoreData,
+  handleOpenDialogImages,
+}) {
   return itemData ? (
     <InfiniteScroll
       dataLength={itemData?.hits?.length || 0}
@@ -349,7 +373,10 @@ function MasonryVirtualizationImageList({ itemData, hasMore, fetchMoreData }) {
         </div>
       }
     >
-      <ItemRow itemData={itemData} />
+      <ItemRow
+        itemData={itemData}
+        handleOpenDialogImages={handleOpenDialogImages}
+      />
     </InfiniteScroll>
   ) : (
     <div>
@@ -368,20 +395,32 @@ const ItemRow = React.memo(RenderRow, areEqual);
 
 const ImageRow = React.memo(ImageLoading, areEqual);
 
-function RenderRow({ itemData }) {
+function RenderRow({ itemData, handleOpenDialogImages }) {
   const colsSM = useBreakpointWidht("sm");
   const colsMD = useBreakpointWidht("md");
 
   return (
     <ImageList variant="masonry" cols={colsMD || colsSM ? 2 : 1} gap={8}>
-      {itemData.hits.map((item) => (
-        <ImageRow item={item} />
-      ))}
+      {itemData.hits.map(
+        (item) =>
+          item?.webformatURL && (
+            <ImageRow
+              key={item.id}
+              item={item}
+              handleOpenDialogImages={handleOpenDialogImages}
+            />
+          )
+      )}
     </ImageList>
   );
 }
 
-function ImageLoading({ item }) {
+export function ImageLoading({
+  item,
+  handleOpenDialogImages,
+  headetTitle = true,
+  anotherStyle,
+}) {
   const styleLoading = {
     loading: {
       width: "100%",
@@ -395,17 +434,19 @@ function ImageLoading({ item }) {
       transition: "filter 0.2s linear",
       cursor: "zoom-in",
       objectFit: "cover",
+      ...anotherStyle,
     },
   };
 
   return (
-    <ImageListItem key={item.id}>
+    <ImageListItem>
       <ProgressiveImage
         src={item?.webformatURL || ""}
         placeholder={`image/blur.jpg?h=${item?.webformatHeight}`}
       >
         {(src, loading) => (
           <img
+            onClick={() => handleOpenDialogImages(item)}
             style={
               loading
                 ? {
@@ -422,15 +463,17 @@ function ImageLoading({ item }) {
           />
         )}
       </ProgressiveImage>
-      <ImageListItemBar
-        sx={{
-          background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-            "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
-        }}
-        title={item?.tags}
-        position="top"
-      />
+      {headetTitle && (
+        <ImageListItemBar
+          sx={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+              "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+          }}
+          title={item?.tags}
+          position="top"
+        />
+      )}
     </ImageListItem>
   );
 }

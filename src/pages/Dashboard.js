@@ -34,6 +34,7 @@ function Dashboard() {
           display: "flex",
           gap: "15px",
           alignItems: "center",
+          flexWrap: "wrap",
           justifyContent: { xs: "center", sm: "inherit" },
         }}
       >
