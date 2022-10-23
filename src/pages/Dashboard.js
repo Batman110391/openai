@@ -36,6 +36,7 @@ function Dashboard() {
           alignItems: "center",
           flexWrap: "wrap",
           justifyContent: { xs: "center", sm: "inherit" },
+          pb: 3,
         }}
       >
         {applications.map((app, i) => (

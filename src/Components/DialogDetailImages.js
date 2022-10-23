@@ -12,6 +12,8 @@ import DownloadForOfflineTwoToneIcon from "@mui/icons-material/DownloadForOfflin
 import { searchFreeImages } from "../api/searchImages";
 import ImageList from "@mui/material/ImageList";
 import { saveAs } from "file-saver";
+import IconButton from "@mui/material/IconButton";
+import CloseTwoToneIcon from "@mui/icons-material/CloseTwoTone";
 import { ImageLoading } from "../applications/FindImages";
 import { areEqual, useBreakpointWidht } from "../utils/util";
 
@@ -37,15 +39,19 @@ export default function DialogDetailImages({
 
   const imageStart = React.useRef(null);
 
+  const colsXS = useBreakpointWidht("xs");
   const colsSM = useBreakpointWidht("sm");
   const colsMD = useBreakpointWidht("md");
 
   const handleClose = () => {
+    setZoomIn(false);
     closeDialog();
   };
 
   const handleSettingZoom = () => {
-    setZoomIn(!zoomIn);
+    if (!colsXS) {
+      setZoomIn(!zoomIn);
+    }
   };
 
   React.useEffect(() => {
@@ -94,7 +100,7 @@ export default function DialogDetailImages({
   const styleImage = {
     maxHeight: zoomIn ? "unset" : '"500px"',
     cursor: zoomIn ? "zoom-out" : "zoom-in",
-    width: zoomIn ? "100%" : "unset",
+    width: zoomIn ? "100%" : colsXS ? "100%" : "unset",
   };
 
   return (
@@ -104,11 +110,21 @@ export default function DialogDetailImages({
       scroll={"paper"}
       fullWidth={true}
       maxWidth={"lg"}
+      fullScreen={colsXS ? true : false}
     >
       <DialogTitle>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={image?.user} src={image?.userImageURL} />
-          <Typography variant="button">{image?.user}</Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt={image?.user} src={image?.userImageURL} />
+            <Typography variant="button">{image?.user}</Typography>
+          </Stack>
+          <IconButton aria-label="close" onClick={handleClose}>
+            <CloseTwoToneIcon />
+          </IconButton>
         </Stack>
       </DialogTitle>
       <DialogContent dividers={true} sx={{ p: 3 }}>

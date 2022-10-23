@@ -175,7 +175,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
           spacing={2}
         >
           <Stack flexDirection="column" alignItems="center" spacing={2}>
-            <Box sx={{ minWidth: "380px" }}>
+            <Box sx={{ minWidth: "350px" }}>
               <FormLabel id="image_type">Tipo di immagine</FormLabel>
               <RadioGroup
                 row
@@ -205,7 +205,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
                 />
               </RadioGroup>
             </Box>
-            <Box sx={{ minWidth: "380px" }}>
+            <Box sx={{ minWidth: "350px" }}>
               <FormLabel id="orientation">Orientamento</FormLabel>
               <RadioGroup
                 row
@@ -232,7 +232,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
             </Box>
           </Stack>
           <Stack flexDirection="column" alignItems="center" spacing={2}>
-            <FormControl sx={{ minWidth: "380px" }}>
+            <FormControl sx={{ minWidth: "350px" }}>
               <InputLabel id="category">Categoria</InputLabel>
               <Select
                 labelId="category"
@@ -252,7 +252,7 @@ export default function FindImages({ queryFindImage, dispatch }) {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ minWidth: "380px" }}>
+            <FormControl sx={{ minWidth: "350px" }}>
               <InputLabel id="colors">Colore</InputLabel>
               <Select
                 labelId="colors"

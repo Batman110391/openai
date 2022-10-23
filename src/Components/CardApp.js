@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export default function CardApp({ title, path, image }) {
   return (
     <Tooltip title={title}>
-      <Card sx={{ width: 175 }} component={Link} to={path}>
+      <Card sx={{ width: { xs: "100%", sm: 175 } }} component={Link} to={path}>
         <CardActionArea>
           <CardMedia component="img" height="140" image={image} alt={title} />
         </CardActionArea>
