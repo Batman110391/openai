@@ -49,7 +49,7 @@ export default function DialogDetailImages({
   };
 
   const handleSettingZoom = () => {
-    if (!colsXS) {
+    if (colsSM) {
       setZoomIn(!zoomIn);
     }
   };
@@ -100,7 +100,7 @@ export default function DialogDetailImages({
   const styleImage = {
     maxHeight: zoomIn ? "unset" : '"500px"',
     cursor: zoomIn ? "zoom-out" : "zoom-in",
-    width: zoomIn ? "100%" : colsXS ? "100%" : "unset",
+    width: zoomIn ? "100%" : colsXS && !colsMD ? "100%" : "unset",
   };
 
   return (
@@ -110,7 +110,7 @@ export default function DialogDetailImages({
       scroll={"paper"}
       fullWidth={true}
       maxWidth={"lg"}
-      fullScreen={colsXS ? true : false}
+      fullScreen={colsXS && !colsMD ? true : false}
     >
       <DialogTitle>
         <Stack

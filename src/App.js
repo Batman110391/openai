@@ -8,6 +8,7 @@ import ChatBot from "./applications/ChatBot";
 import Review from "./applications/Review";
 import DiffText from "./applications/DiffText";
 import FindImages from "./applications/FindImages";
+import GoogleNews from "./applications/GoogleNews";
 
 const initialState = {
   message: [],
@@ -51,6 +52,9 @@ export default function App() {
                 queryFindImage={state.queryFindImage}
                 dispatch={dispatch}
               />
+            </Route>
+            <Route path="/googlenews" exact>
+              <GoogleNews dispatch={dispatch} />
             </Route>
           </Switch>
         </ResponsiveDrawer>

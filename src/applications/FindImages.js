@@ -360,10 +360,11 @@ function MasonryVirtualizationImageList({
 }) {
   return itemData ? (
     <InfiniteScroll
+      //height={1000}
       dataLength={itemData?.hits?.length || 0}
       next={() => fetchMoreData(itemData?.hits, itemData?.totalHits || 0)}
       hasMore={hasMore}
-      pullDownToRefresh={false}
+      //scrollableTarget="boxLayout"
       loader={
         <div className="sk-folding-cube">
           <div className="sk-cube1 sk-cube" />
