@@ -25,11 +25,11 @@ function Dashboard() {
       path: "/findimages",
       image: "image/findimage.jpg",
     },
-    /*  {
-      name: "Ultime notizie da Google",
-      path: "/googlenews",
-      image: "image/google-news.jpg",
-    }, */
+    {
+      name: "Ricerca avanzata",
+      path: "/wiki",
+      image: "image/wiki.jpg",
+    },
   ];
 
   return (
