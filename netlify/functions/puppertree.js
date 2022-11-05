@@ -1,31 +1,17 @@
-const puppeteer = require("puppeteer");
-const url = "https://www.mymovies.it/film/2021/cmon-cmon/cinema/lazio/";
-const options = {
-  args: ["--no-sandbox"],
-};
-
-const selector = "#recensione";
+const scrapeIt = require("scrape-it");
 
 exports.handler = async function (event, context) {
-  async function getTable() {
-    const browser = await puppeteer.launch(options);
-    const context = await browser.createIncognitoBrowserContext();
-    const page = await context.newPage();
-    await page.goto(url);
-    const tableInfo = await page.$$eval(selector, (nodes) => {
-      return nodes.map((node) => {
-        const table = node.querySelector("table");
-
-        return table.textContent;
-      });
-    });
-
-    await browser.close();
-
-    return tableInfo;
-  }
-
-  const result = await getTable();
+  // Promise interface
+  const result = await scrapeIt("https://ionicabizau.net", {
+    title: ".header h1",
+    desc: ".header h2",
+    avatar: {
+      selector: ".header img",
+      attr: "src",
+    },
+  }).then(({ data, response }) => {
+    return { status: `Status Code: ${response.statusCode}`, response: data };
+  });
 
   return {
     statusCode: 200,
