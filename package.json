@@ -26,7 +26,7 @@
     "react-progressive-graceful-image": "^0.6.14",
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.1",
-    "scrape-html-web": "^1.0.19",
+    "scrape-html-web": "^1.0.21",
     "simple-text-diff": "^1.7.0",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4"

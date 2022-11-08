@@ -1,4 +1,4 @@
-import scrapeHtmlWeb from "scrape-html-web";
+const scrapeHtmlWeb = require("scrape-html-web");
 
 export async function handler(event, context) {
   //const { body } = event;
