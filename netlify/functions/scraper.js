@@ -1,6 +1,6 @@
-const scrapeHtmlWeb = require("scrape-html-web");
+import scrapeHtmlWeb from "scrape-html-web";
 
-exports.handler = async function (event, context) {
+export async function handler(event, context) {
   //const { body } = event;
   // Promise interface
   const optionsFirstExample = {
@@ -25,4 +25,4 @@ exports.handler = async function (event, context) {
       body: JSON.stringify({ error: err }),
     };
   }
-};
+}
