@@ -27,6 +27,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.1",
     "react-xml-parser": "^1.1.8",
+    "scrape-html-web": "^1.0.9",
     "scrape-it": "^5.3.2",
     "simple-text-diff": "^1.7.0",
     "styled-components": "^5.3.5",

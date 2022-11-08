@@ -13780,6 +13780,11 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
+scrape-html-web@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/scrape-html-web/-/scrape-html-web-1.0.9.tgz#37403670fd60e97deb86f1a134a1850ff65bb2b6"
+  integrity sha512-akqSLo60ZPu9ET7hyLLvWSe5hgNLDyaK0+D5cyWLA7LqFlYPRD9oCTYxZH9QWHShhZuNrBPWO5geIw8HyemUEQ==
+
 scrape-it-core@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/scrape-it-core/-/scrape-it-core-1.0.0.tgz#c3adc359ed8dbcdd53a843b80c91a2a93176ed63"
