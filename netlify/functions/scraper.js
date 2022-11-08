@@ -1,10 +1,19 @@
 const scrapeHtmlWeb = require("scrape-html-web");
 
 exports.handler = async function (event, context) {
-  const { body } = event;
+  //const { body } = event;
   // Promise interface
+  const optionsFirstExample = {
+    url: "https://nodejs.org/en/blog/",
+    mainSelector: ".blog-index",
+    childrenSelector: [
+      { key: "date", selector: "time", type: "text" },
+      { key: "version", selector: "a", type: "text" },
+      { key: "link", selector: "a", attr: "href" },
+    ],
+  };
   try {
-    const data = await scrapeHtmlWeb(body);
+    const data = await scrapeHtmlWeb(optionsFirstExample);
 
     return {
       statusCode: 200,
