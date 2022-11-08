@@ -13780,10 +13780,10 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
-scrape-html-web@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/scrape-html-web/-/scrape-html-web-1.0.9.tgz#37403670fd60e97deb86f1a134a1850ff65bb2b6"
-  integrity sha512-akqSLo60ZPu9ET7hyLLvWSe5hgNLDyaK0+D5cyWLA7LqFlYPRD9oCTYxZH9QWHShhZuNrBPWO5geIw8HyemUEQ==
+scrape-html-web@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/scrape-html-web/-/scrape-html-web-1.0.12.tgz#8116cd4999008da9644adee635f6195916f988aa"
+  integrity sha512-yNGfa1t28RquBVtKB52H4QY45aFAyQ0Gn/HixihS1KaKxLXJ+y0G64b0ratVHRHXFD4miKwv8CtD6+QCoOCPug==
 
 scrape-it-core@^1.0.0:
   version "1.0.0"
