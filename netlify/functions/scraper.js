@@ -1,4 +1,4 @@
-const scrapeHtmlWeb = require("scrape-html-web");
+const scrapeHtmlWeb = require("../../src/lib/cjs/cjsindex");
 
 export async function handler(event, context) {
   //const { body } = event;
