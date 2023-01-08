@@ -1,19 +1,15 @@
 const chromium = require("chrome-aws-lambda");
-const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-
-const dev = false;
+const puppeteer = require("puppeteer-core");
 
 exports.handler = async function (event) {
   console.log("functions");
-  //const { content, destination } = JSON.parse(event.body);
-  puppeteer.use(StealthPlugin());
+
+  const localPathChrome =
+    "C:/Program Files/Google/Chrome/Application/chrome.exe";
 
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disabled-setupid-sandbox"],
-    executablePath: dev
-      ? "C:/Program Files/Google/Chrome/Application/chrome.exe"
-      : await chromium.executablePath,
+    args: chromium.args,
+    executablePath: localPathChrome || (await chromium.executablePath),
     headless: true,
   });
 
