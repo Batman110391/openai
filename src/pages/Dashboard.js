@@ -26,9 +26,9 @@ function Dashboard() {
       image: "image/findimage.jpg",
     },
     {
-      name: "Ricerca avanzata",
-      path: "/wiki",
-      image: "image/wiki.jpg",
+      name: "Notizie attuali",
+      path: "/news",
+      image: "image/newspng.png",
     },
   ];
 

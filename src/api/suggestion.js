@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
@@ -7,7 +8,7 @@ const openai = new OpenAIApi(configuration);
 
 export async function suggestionsText(inputSearch) {
   const completion = await openai.createCompletion({
-    model: "text-davinci-002",
+    model: "text-davinci-003",
     prompt: inputSearch.toUpperCase(),
     temperature: 0.6,
   });
@@ -20,7 +21,7 @@ export async function suggestionsText(inputSearch) {
 
 export async function suggestionsGrammaticalText(inputSearch) {
   const completion = await openai.createCompletion({
-    model: "text-davinci-002",
+    model: "text-davinci-003",
     prompt: `Correct the text in grammatically correct Italian:\n\n ${inputSearch}`,
     temperature: 0,
     max_tokens: 60,
@@ -35,26 +36,14 @@ export async function suggestionsGrammaticalText(inputSearch) {
 }
 
 export async function marvChatBot(message) {
-  const completion = await openai.createCompletion({
-    model: "text-davinci-002",
-    prompt: `Marv è un chatbot molto disponibile, divertente e amichevole, che intrattiene e risponde alla domande in lingua italiana :\n\n${message}\nMarv:`,
-    temperature: 0,
-    max_tokens: 700,
-    top_p: 1,
-    frequency_penalty: 0.5,
-    presence_penalty: 0.5,
-  });
-
-  const response = completion.data.choices[0].text;
-
-  return response;
+  const response = await axios.get("/.netlify/functions/scraper");
 }
 
 export async function reviewIA(notes, type) {
   const prompt = getPrompt(type);
 
   const completion = await openai.createCompletion({
-    model: "text-davinci-002",
+    model: "text-davinci-003",
     prompt: `${prompt}, basata su queste Note:\nNote: ${notes}\nRecensione:`,
     temperature: 0.5,
     max_tokens: 1725,

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import reducer from "./store/store.reducer";
 import ResponsiveDrawer from "./pages/ResponsiveDrawer";
@@ -8,7 +8,7 @@ import ChatBot from "./applications/ChatBot";
 import Review from "./applications/Review";
 import DiffText from "./applications/DiffText";
 import FindImages from "./applications/FindImages";
-import Wiki from "./applications/Wiki";
+import News from "./applications/News";
 
 const initialState = {
   message: [],
@@ -28,6 +28,17 @@ const initialState = {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    console.log("entro");
+    (async () => {
+      const request = await fetch("/.netlify/functions/scraper").then((resp) =>
+        resp.json()
+      );
+
+      console.log("result", request);
+    })();
+  }, []);
 
   return (
     <>
@@ -53,8 +64,8 @@ export default function App() {
                 dispatch={dispatch}
               />
             </Route>
-            <Route path="/wiki" exact>
-              <Wiki dispatch={dispatch} />
+            <Route path="/news" exact>
+              <News s dispatch={dispatch} />
             </Route>
           </Switch>
         </ResponsiveDrawer>

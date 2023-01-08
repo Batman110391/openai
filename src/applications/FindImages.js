@@ -131,7 +131,6 @@ export default function FindImages({ queryFindImage, dispatch }) {
   }, [queryFindImage]);
 
   const fetchMoreData = async (hits, total) => {
-    console.log(hits.length, total);
     if (hits.length >= total) {
       setHashMore(false);
       return;
@@ -154,8 +153,6 @@ export default function FindImages({ queryFindImage, dispatch }) {
       );
     }, 100);
   };
-
-  console.log(queryFindImage);
 
   return (
     <BoxLayout>
