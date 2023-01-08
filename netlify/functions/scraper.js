@@ -1,4 +1,4 @@
-const chromium = require("chrome-aws-lambda");
+const chromium = require("@sparticuz/chromium");
 const puppeteer = require("puppeteer-core");
 
 exports.handler = async function (event) {
@@ -14,6 +14,7 @@ exports.handler = async function (event) {
     args: chromium.args,
     executablePath: executablePath,
     headless: true,
+    ignoreHTTPSErrors: true,
   });
 
   console.log("Running tests...");
