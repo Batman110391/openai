@@ -10,6 +10,7 @@ exports.handler = async function (event) {
   const executablePath = await chromium.executablePath;
 
   const browser = await puppeteer.launch({
+    ignoreDefaultArgs: ["--disable-extensions"],
     args: chromium.args,
     executablePath: executablePath,
     headless: true,
