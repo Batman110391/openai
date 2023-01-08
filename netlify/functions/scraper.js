@@ -7,9 +7,11 @@ exports.handler = async function (event) {
   const localPathChrome =
     "C:/Program Files/Google/Chrome/Application/chrome.exe";
 
+  const executablePath = await chromium.executablePath;
+
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath: localPathChrome || (await chromium.executablePath),
+    executablePath: executablePath,
     headless: true,
   });
 
