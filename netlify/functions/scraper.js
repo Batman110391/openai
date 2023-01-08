@@ -10,7 +10,12 @@ exports.handler = async function (event) {
   const executablePath = await chromium.executablePath;
 
   const browser = await puppeteer.launch({
-    args: chromium.args,
+    args: [
+      ...chromium.args,
+      "--disable-features=AudioServiceOutOfProcess",
+      "--disable-gpu",
+      "--disable-software-rasterize",
+    ],
     executablePath: executablePath,
     headless: true,
     ignoreHTTPSErrors: true,
